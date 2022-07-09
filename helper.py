@@ -1,12 +1,10 @@
-import csv
 from pathlib import Path
-import pandas as pd
+
 import numpy as np
+import pandas as pd
 
 
-def load_synonyms(
-    path="/Users/kevin/Code/embeddings/data/synonyms/synonyms.csv"
-):
+def load_synonyms(path="/Users/kevin/Code/embeddings/data/synonyms/synonyms.csv"):
     path = Path(path)
     if not path.exists():
         raise FileNotFoundError(
@@ -23,9 +21,7 @@ def load_synonyms(
     return df
 
 
-def load_antonyms(
-    path="/Users/kevin/Code/embeddings/data/antonyms/antonyms.csv"
-):
+def load_antonyms(path="/Users/kevin/Code/embeddings/data/antonyms/antonyms.csv"):
     path = Path(path)
     if not path.exists():
         raise FileNotFoundError(

@@ -1,10 +1,8 @@
 import random
+from pathlib import Path
 
 import numpy as np
 from annoy import AnnoyIndex
-from pathlib import Path
-
-import helper
 
 
 def bimap_embeddings(embeddings):
