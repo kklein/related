@@ -12,10 +12,13 @@ def bimap_embeddings(embeddings):
 
 
 def create_embeddings(
-    path="/Users/kevin/Code/embeddings/data/glove.6B/glove.6B.100d.txt",
+    n_dim=100,
+    path=None,
     dtype="float32",
 ):
     mapping = {}
+    if path is None:
+        path = f"/Users/kevin/Code/embeddings/data/glove.6B/glove.6B.{n_dim}d.txt"
     path = Path(path)
     if not path.exists():
         raise FileNotFoundError(
