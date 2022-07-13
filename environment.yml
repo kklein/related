@@ -1,0 +1,22 @@
+name: related
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - pytorch=1.11.0
+  - ipython
+  - ca-certificates
+  - openssl
+  - black
+  - isort
+  - flake8
+  - colorama
+  - flask
+  - pandas
+  - scikit-learn
+  - matplotlib
+  - sacred
+  - certifi
+  - pymongo
+  - seaborn
+  - torchvision
