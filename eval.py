@@ -69,6 +69,37 @@ def plot_sample_embeddings(
     return filename
 
 
+def matrix_cosine_similarity(matrix1, matrix2):
+    return (
+        matrix1
+        @ matrix2.T
+        / (
+            np.sqrt(np.sum(matrix1**2, axis=1))[:, np.newaxis]
+            * np.sqrt(np.sum(matrix2**2, axis=1))[np.newaxis, :]
+        )
+    )
+
+
+def plot_sample_similarities(
+    embeddings,
+    word_to_int,
+    words=["king", "queen", "man", "woman", "fire", "water", "jealous", "deprived"],
+    filename="similarities_sample.png",
+):
+    ids = [word_to_int[word] for word in words]
+    embedding_selection = embeddings[ids, :]
+    similarities = matrix_cosine_similarity(embedding_selection, embedding_selection)
+
+    fig, ax = plt.subplots()
+    cax = ax.matshow(similarities, aspect="auto")
+    words = [""] + words
+    ax.set_yticklabels(words)
+    ax.set_xticklabels(words)
+    fig.colorbar(cax)
+    fig.savefig(filename)
+    return filename
+
+
 @ex.capture
 @ex.automain
 def eval(n_dim, dtype, vocabulary=None):
@@ -96,3 +127,4 @@ def eval(n_dim, dtype, vocabulary=None):
     ex.log_scalar("loss", loss)
     ex.add_artifact(plot_antonym_synonym_histograms(a_distances, s_distances))
     ex.add_artifact(plot_sample_embeddings(embeddings, word_to_int))
+    ex.add_artifact(plot_sample_similarities(embeddings, word_to_int))
