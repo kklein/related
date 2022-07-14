@@ -2,6 +2,7 @@ import random
 from pathlib import Path
 
 import numpy as np
+import torch
 from annoy import AnnoyIndex
 
 
@@ -11,11 +12,7 @@ def bimap_embeddings(embeddings):
     return int_to_word, word_to_int
 
 
-def create_embeddings(
-    n_dim=100,
-    path=None,
-    dtype="float32",
-):
+def load_glove_embeddings(n_dim=100, path=None, dtype="float32"):
     mapping = {}
     if path is None:
         path = f"/Users/kevin/Code/embeddings/data/glove.6B/glove.6B.{n_dim}d.txt"
@@ -34,6 +31,31 @@ def create_embeddings(
     embeddings = np.array(list(mapping.values()))
     int_to_word, word_to_int = bimap_embeddings(mapping)
     return embeddings, int_to_word, word_to_int
+
+
+def load_self_trained_word2vec_embeddings(path=None, dtype="float32"):
+    mapping = []
+    if path is None:
+        path = "/Users/kevin/Code/embeddings/data/self-trained-word2vec/embeddings.csv"
+    path = Path(path)
+    with open(path) as filehandle:
+        for line in filehandle:
+            mapping.append(np.asarray(line.split(","), dtype=dtype))
+    embeddings = np.array(mapping)
+    vocabulary = torch.load(
+        "/Users/kevin/Code/embeddings/data/self-trained-word2vec/vocabulary.pth"
+    )
+    word_to_int = vocabulary.vocab.get_stoi()
+    int_to_word = vocabulary.vocab.get_itos()
+    return embeddings, int_to_word, word_to_int
+
+
+def load_embeddings(embedding_type, *args, **kwargs):
+    if embedding_type == "self-trained":
+        return load_self_trained_word2vec_embeddings(*args, **kwargs)
+    elif embedding_type == "glove":
+        return load_glove_embeddings(*args, **kwargs)
+    raise ValueError(f"Unexpected embedding type: {embedding_type}.")
 
 
 def build_index(embeddings, metric="euclidean", n_trees=10):

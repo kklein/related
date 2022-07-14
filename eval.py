@@ -32,6 +32,7 @@ def total_loss(antonym_distances, synonym_distances):
 def my_config():
     n_dim = 100
     dtype = "float16"
+    embedding_type = "self-trained"
 
 
 def plot_antonym_synonym_histograms(
@@ -57,6 +58,7 @@ def plot_sample_embeddings(
 ):
     # Context:
     # https://stackoverflow.com/questions/3529666/matplotlib-matshow-labels
+    words = [word for word in words if word in word_to_int]
     ids = [word_to_int[word] for word in words]
     embedding_selection = embeddings[ids, :]
     fig, ax = plt.subplots()
@@ -86,6 +88,7 @@ def plot_sample_similarities(
     words=["king", "queen", "man", "woman", "fire", "water", "jealous", "deprived"],
     filename="similarities_sample.png",
 ):
+    words = [word for word in words if word in word_to_int]
     ids = [word_to_int[word] for word in words]
     embedding_selection = embeddings[ids, :]
     similarities = matrix_cosine_similarity(embedding_selection, embedding_selection)
@@ -102,8 +105,8 @@ def plot_sample_similarities(
 
 @ex.capture
 @ex.automain
-def eval(n_dim, dtype, vocabulary=None):
-    embeddings, int_to_word, word_to_int = glove.create_embeddings()
+def eval(n_dim, dtype, embedding_type, vocabulary=None):
+    embeddings, int_to_word, word_to_int = glove.load_embeddings(embedding_type)
     if vocabulary is None:
         vocabulary = set(word_to_int.keys())
 

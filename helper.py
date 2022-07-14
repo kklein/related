@@ -1,3 +1,4 @@
+import warnings
 from pathlib import Path
 
 import numpy as np
@@ -55,7 +56,13 @@ def process_word_pairs(word_pairs, is_synonym, word_to_int, vocabulary, n_sample
         pair_id=word_pairs.apply(lambda x: word_to_int[x[prefix]], axis=1),
     )
     word_pairs = word_pairs.reset_index(drop=True)
-    indeces = np.random.choice(word_pairs.shape[0], n_samples, replace=False)
-    indeces.sort()
-    word_pairs = word_pairs.iloc[indeces]
+    if (n_samples_available := word_pairs.shape[0]) < n_samples:
+        warnings.warn(
+            f"Could not sample {n_samples} samples, only {n_samples_available} available."
+        )
+    else:
+        n_samples = min(n_samples, word_pairs.shape[0])
+        indeces = np.random.choice(word_pairs.shape[0], n_samples, replace=False)
+        indeces.sort()
+        word_pairs = word_pairs.iloc[indeces]
     return word_pairs
